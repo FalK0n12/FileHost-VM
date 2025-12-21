@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="icon" type="image/png" sizes="128x128" href="{{ url_for('static', filename='/favicon-64x64.png') }}">
+    <title>FileHost Admin Panel</title>
+    <style>
+        body {
+            background-color: #1A1C20;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center; margin-top: 3vh;">FileHost Admin Panel</h1>
+    <form action="/adminPanel" method="POST">
+        {% if not isAdmin %}
+        <input style="margin: 0; position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); text-align: center;" type="password" name="passwordInput" placeholder="Enter Password">
+        {% endif %}
+    </form>
+
+    {% if isAdmin and FILES %}
+    <div class="files-section"style="margin-top: 5vh">
+        <div class="files-container">
+            <div class="files-header">
+                <h2>📁 Uploaded Files</h2>
+                <p class="last-updated">Last Updated: {{ last_updated }}</p>
+            </div>
+            <div class="files-grid">
+                {% for file in FILES %}
+                <div class="file-card">
+                    <div class="file-content">
+                        <a href="https://filehost.cloud/download/{{ file.name }}" class="file-link">
+                            <div class="file-icon">
+                                {% if file.extension in ['.exe', '.msi'] %}
+                                    🔧
+                                {% elif file.extension in ['.zip', '.rar', '.7z'] %}
+                                    📦
+                                {% elif file.extension in ['.txt', '.doc', '.docx', '.pdf'] %}
+                                    📄
+                                {% elif file.extension in ['.jpg', '.png', '.gif', '.webp'] %}
+                                    🖼️
+                                {% elif file.extension in ['.mp4', '.avi', '.mkv'] %}
+                                    🎬
+                                {% elif file.extension in ['.mp3', '.wav', '.flac'] %}
+                                    🎵
+                                {% else %}
+                                    📄
+                                {% endif %}
+                            </div>
+                            <div class="file-info">
+                                <div class="file-name">{{ file.name }}</div>
+                                <div class="file-details">
+                                    <span class="file-size">{{ file.size }}</span>
+                                    <span class="file-date">{{ file.date }}</span>
+                                </div>
+                            </div>
+                        </a>
+                        <form method="POST" action="/adminPanel/delete/{{ file.name }}" onsubmit="return confirm('Are you sure you want to delete {{ file.name }}?');">
+                            <button class="copy-button" title="Delete file">
+                                🗑️
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</body>
+</html>

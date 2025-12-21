@@ -1,14 +1,14 @@
-from flask import Flask, request, render_template, send_from_directory
-import os
+from flask import Flask, request, render_template, send_from_directory, session, abort, redirect, url_for
+import os, math, bcrypt
 from datetime import datetime
-import math
 
 app = Flask(__name__)
 
-fileDirectory = os.path.join(os.getcwd(), "files")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+fileDirectory = os.path.join(BASE_DIR, "files")
 os.makedirs(fileDirectory, exist_ok=True)
 app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024 * 1024
-
+app.secret_key = os.urandom(32)
 
 def get_file_info(filename):
     filepath = os.path.join(fileDirectory, filename)
@@ -77,6 +77,34 @@ def Download(fileName: str):
         return send_from_directory(fileDirectory, fileName, as_attachment=True)
     else:
         return "No such file exists"
+
+@app.route("/adminPanel", methods=["GET", "POST"])
+def adminPanel():
+    files_info = get_files_with_info()
+    last_updated = datetime.now().strftime('%d/%m/%Y %H:%M GMT%z')
+    if request.method == "POST":
+        passwordInput = request.form.get("passwordInput").encode()
+        with open("admin.txt", "r") as file:
+            hashedPasswords = file.read().splitlines()
+        for i in hashedPasswords:
+            if bcrypt.checkpw(passwordInput, i.encode()):
+                session["is_admin"] = True
+                return redirect(url_for("adminPanel"))
+        return render_template('admin.html', FILES=files_info, last_updated=last_updated, isAdmin=False)
+    else:
+        return render_template('admin.html', FILES=files_info, last_updated=last_updated, isAdmin=session.get("is_admin", False))
+
+@app.route("/adminPanel/delete/<path:filename>", methods=["POST"])
+def deleteFile(filename):
+    if not session.get("is_admin"):
+        abort(403)
+    filepath = os.path.join(fileDirectory, filename)
+    if not os.path.abspath(filepath).startswith(os.path.abspath(fileDirectory)):
+        abort(400)
+    if not os.path.exists(filepath):
+        abort(404)
+    os.remove(filepath)
+    return redirect(url_for("adminPanel"))
 
 if __name__ == '__main__':
     app.run(debug=True)
