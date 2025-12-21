@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="icon" type="image/png" sizes="128x128" href="{{ url_for('static', filename='/favicon-64x64.png') }}">
+    <style>
+        body {
+            background-color: #1A1C20;
+        }
+    </style>
+    <title>FileHost</title>
+</head>
+<body>
+    <h1 class="centeredText"><a href="https://filehost.cloud/">File Host</a></h1>
+    <div class="buttons">
+        <form action="/Upload" method="POST" enctype="multipart/form-data" id="uploadForm">
+            <div class="file-upload-section">
+                <div class="file-input-wrapper">
+                    <input type="file" name="File" id="fileInput" class="file-input" accept="*/*">
+                    <label for="fileInput" class="file-input-button">
+                        <span class="icon">📁</span>Choose File
+                    </label>
+                </div>
+                
+                <div class="file-info" id="fileInfo">
+                    <span class="file-placeholder">No file selected</span>
+                </div>
+                
+                <button type="submit" class="upload-button" id="uploadBtn" disabled>
+                    <span class="icon">📤</span>Upload
+                </button>
+            </div>
+        </form>
+    </div>
+    {% if FILES %}
+    <div class="files-section">
+        <div class="files-container">
+            <div class="files-header">
+                <h2>📁 Uploaded Files</h2>
+                <p class="last-updated">Last Updated: {{ last_updated }}</p>
+            </div>
+            
+            <div class="files-grid">
+                {% for file in FILES %}
+                <div class="file-card">
+                    <div class="file-content">
+                        <a href="https://filehost.cloud/download/{{ file.name }}" class="file-link">
+                            <div class="file-icon">
+                                {% if file.extension in ['.exe', '.msi'] %}
+                                    🔧
+                                {% elif file.extension in ['.zip', '.rar', '.7z'] %}
+                                    📦
+                                {% elif file.extension in ['.txt', '.doc', '.docx', '.pdf'] %}
+                                    📄
+                                {% elif file.extension in ['.jpg', '.png', '.gif', '.webp'] %}
+                                    🖼️
+                                {% elif file.extension in ['.mp4', '.avi', '.mkv'] %}
+                                    🎬
+                                {% elif file.extension in ['.mp3', '.wav', '.flac'] %}
+                                    🎵
+                                {% else %}
+                                    📄
+                                {% endif %}
+                            </div>
+                            <div class="file-info">
+                                <div class="file-name">{{ file.name }}</div>
+                                <div class="file-details">
+                                    <span class="file-size">{{ file.size }}</span>
+                                    <span class="file-date">{{ file.date }}</span>
+                                </div>
+                            </div>
+                        </a>
+                        <button onclick="copyToClipboard('https://filehost.cloud/download/{{ file.name }}', this)" class="copy-button" title="Copy download link">
+                            📋
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if ERROR %}
+        <script>
+            alert('File already exists! Please choose a different file or rename it.');
+        </script>
+    {% endif %}
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const uploadBtn = document.getElementById('uploadBtn');
+
+        fileInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            
+            if (file) {
+                const fileSize = formatFileSize(file.size);
+                fileInfo.classList.add('has-file');
+                fileInfo.innerHTML = `
+                    <span class="file-name">${file.name}</span>
+                    <span class="file-size">(${fileSize})</span>
+                `;
+                uploadBtn.disabled = false;
+            } else {
+                fileInfo.classList.remove('has-file');
+                fileInfo.innerHTML = '<span class="file-placeholder">No file selected</span>';
+                uploadBtn.disabled = true;
+            }
+        });
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        function copyToClipboard(url, buttonElement) {
+            navigator.clipboard.writeText(url).then(function() {
+                const originalEmoji = buttonElement.innerHTML;
+                const originalTitle = buttonElement.title;
+                
+                buttonElement.innerHTML = '✓';
+                buttonElement.title = 'Copied!';
+                buttonElement.classList.add('copied');
+                
+                setTimeout(() => {
+                    buttonElement.innerHTML = originalEmoji;
+                    buttonElement.title = originalTitle;
+                    buttonElement.classList.remove('copied');
+                }, 2000);
+            }).catch(function(err) {
+                const textArea = document.createElement('textarea');
+                textArea.value = url;
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                
+                try {
+                    document.execCommand('copy');
+                    const originalEmoji = buttonElement.innerHTML;
+                    const originalTitle = buttonElement.title;
+                    
+                    buttonElement.innerHTML = '✓';
+                    buttonElement.title = 'Copied!';
+                    buttonElement.classList.add('copied');
+                    
+                    setTimeout(() => {
+                        buttonElement.innerHTML = originalEmoji;
+                        buttonElement.title = originalTitle;
+                        buttonElement.classList.remove('copied');
+                    }, 2000);
+                } catch (fallbackErr) {
+                    alert('Could not copy link. Please copy manually: ' + url);
+                }
+                
+                document.body.removeChild(textArea);
+            });
+        }
+    </script>
+    <br>
+</body>
+</html>

@@ -1,0 +1,409 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    min-height: 100vh;
+    color: #ffffff;
+}
+
+a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+li {
+    padding-left: 0.2vw;
+    padding-top: 0.2vh;
+}
+
+.buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 35vh;
+}
+
+.file-upload-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 30px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.file-input-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.file-input {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.file-input-button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+    padding: 16px 32px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    position: relative;
+    overflow: hidden;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    min-width: 160px;
+    display: inline-block;
+}
+
+
+.file-input-button:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.file-input-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+}
+
+.file-input-button:hover:before {
+    left: 100%;
+}
+
+.file-info {
+    padding: 12px 20px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    text-align: center;
+    transition: all 0.3s ease;
+    border: 2px dashed rgba(255, 255, 255, 0.3);
+}
+
+.file-info.has-file {
+    background: rgba(76, 175, 80, 0.2);
+    border-color: rgba(76, 175, 80, 0.5);
+}
+
+.file-placeholder {
+    color: rgba(255, 255, 255, 0.7);
+    margin-right: 55px;
+    font-style: italic;
+    min-width: 250px;
+}
+
+.file-name {
+    font-weight: 600;
+    color: #4caf50;
+}
+
+.file-size {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+    margin-left: 10px;
+}
+
+.upload-button {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+    border: none;
+    color: white;
+    padding: 16px 32px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+    position: relative;
+    overflow: hidden;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    min-width: 140px;
+}
+
+.upload-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #ff5252 0%, #e53935 100%);
+    box-shadow: 0 8px 25px rgba(255, 107, 107, 0.6);
+}
+
+.upload-button:disabled {
+    background: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.5);
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+
+.upload-button .icon {
+    margin-right: 8px;
+    font-size: 18px;
+}
+
+.centeredText {
+    padding-top: 2vh;
+    text-align: center;
+}
+
+.files-section {
+    display: flex;
+    justify-content: center;
+}
+
+.files-container {
+    max-width: 600px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+}
+
+.files-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.files-header h2 {
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.last-updated {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+    margin: 0;
+}
+
+.files-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+    max-height: 350px;
+    padding-right: 8px;
+    margin-right: -8px;
+}
+
+.file-card {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    flex-shrink: 0;
+    margin-top: 2px;
+    height: 100px;
+}
+
+.file-content {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    position: relative;
+}
+
+.file-card:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.file-link {
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+    padding-right: 8px;
+    text-decoration: none;
+    color: inherit;
+    flex: 1;
+    height: 100%;
+    box-sizing: border-box;
+    min-width: 0;
+}
+
+.file-icon {
+    font-size: 24px;
+    margin-right: 16px;
+    min-width: 32px;
+    text-align: center;
+}
+
+.file-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    max-width: calc(100% - 60px);
+    overflow: hidden;
+}
+
+.file-name {
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+.file-details {
+    display: flex;
+    gap: 15px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.7);
+    width: 100%;
+    overflow: hidden;
+}
+
+.file-size {
+    font-weight: 500;
+}
+
+.file-date {
+    margin-left: -7px;
+    opacity: 0.8;
+}
+
+.copy-button {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-right: 16px;
+    min-width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.copy-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: scale(1.05);
+    color: #ffffff;
+}
+
+.copy-button:active {
+    transform: scale(0.95);
+}
+
+.copy-button.copied {
+    background: rgba(76, 175, 80, 0.3);
+    border-color: rgba(76, 175, 80, 0.5);
+    color: #4caf50;
+}
+
+.files-grid::-webkit-scrollbar {
+    width: 8px;
+}
+
+.files-grid::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.files-grid::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    transition: background 0.3s ease;
+}
+
+.files-grid::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.files-grid {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 768px) {
+    .files-container {
+        margin: 0 10px;
+        padding: 20px;
+        max-height: 400px;
+    }
+    
+    .files-grid {
+        max-height: 280px;
+    }
+    
+    .file-card {
+        height: 70px;
+        min-height: 70px;
+    }
+    
+    .file-link {
+        padding: 14px 16px;
+        padding-right: 6px;
+    }
+    
+    .file-info {
+        max-width: calc(100% - 50px);
+    }
+    
+    .file-icon {
+        font-size: 20px;
+        margin-right: 12px;
+    }
+    
+    .file-name {
+        font-size: 14px;
+    }
+    
+    .file-details {
+        font-size: 12px;
+    }
+    
+    .copy-button {
+        min-width: 35px;
+        height: 35px;
+        font-size: 14px;
+        margin-right: 12px;
+    }
+}
+
