@@ -52,6 +52,7 @@ def Index():
 
 @app.route("/Upload", methods=["GET","POST"])
 def Upload():
+    last_updated = datetime.now().strftime('%d/%m/%Y %H:%M GMT%z')
     if request.method == "POST":
         if "File" not in request.files:
             return "No file part"
